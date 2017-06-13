@@ -857,5 +857,26 @@ KInt Kotlin_konan_internal_GC_getThreshold(KRef) {
 #endif
 }
 
+KNativePtr CreateStablePointer(KRef any) {
+  if (any == nullptr) return nullptr;
+  ::AddRef(any->container());
+  return reinterpret_cast<KNativePtr>(any);
+}
+
+void DisposeStablePointer(KNativePtr pointer) {
+  if (pointer == nullptr) return;
+  KRef ref = reinterpret_cast<KRef>(pointer);
+  ::Release(ref->container());
+}
+
+OBJ_GETTER(DerefStablePointer, KNativePtr pointer) {
+  KRef ref = reinterpret_cast<KRef>(pointer);
+  RETURN_OBJ(ref);
+}
+
+bool IsSubgraphDisjoint(ObjHeader* root) {
+  // TODO: perform trial deletion starting from this root.
+  return true;
+}
 
 } // extern "C"
